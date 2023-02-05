@@ -2,8 +2,8 @@
 
 # Function to automate the process of committing and pushing changes to a Github repository
 push_to_github() {
-  local repo_path=""
-  local repo_name=""
+  local repo_path=$1
+  local repo_name=$2
 
   # Navigating to the repository folder
   cd $repo_path
@@ -21,6 +21,11 @@ push_to_github() {
   echo "Pushed changes to $repo_name repository"
 }
 
+# Getting the .env file data
+source .env
+
+
 # Main script
-push_to_github closed-repo closed-repo
-push_to_github open-repo open-repo
+for repo in "${REPOS[@]}"; do
+  push_to_github $repo
+done
