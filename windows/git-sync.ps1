@@ -1,9 +1,6 @@
-Write-Output "CLOSED_REPO_NAME: $env:CLOSED_REPO_NAME"
-Write-Output "CLOSED_REPO_FOLDER: $env:CLOSED_REPO_FOLDER"
-
-
 # Load the environment file
 $envFile = "$PSScriptRoot\.env"
+Write-Output "Loading environment file: $envFile"
 
 # Check if the environment file exists
 if (!(Test-Path -Path $envFile)) {
@@ -14,6 +11,8 @@ if (!(Test-Path -Path $envFile)) {
 
 # Read the environment file and store each line as an array
 $env = Get-Content $envFile
+# Write-Output "Environment file contents:"
+# Write-Output $env
 
 # Loop through each line in the environment file
 foreach ($line in $env) {
@@ -29,6 +28,9 @@ foreach ($line in $env) {
     $env[$key] = $value
 }
 
+# Write-Output "Environment hash table:"
+# Write-Output $env
+
 # Create a regular expression to match repository URLs
 $repoUrlRegex = "^REPO_URL_(.*)$"
 
@@ -43,13 +45,19 @@ foreach ($key in $env.Keys) {
         $url = $env["REPO_URL_$repo"]
         $path = $env["REPO_PATH_$repo"]
 
+        Write-Output "Processing repository: $repo"
+        Write-Output "Repository URL: $url"
+        Write-Output "Repository path: $path"
+
         # Check if the local repository exists
         if (!(Test-Path -Path $path)) {
             # If not, clone the repository
+            Write-Output "Cloning repository..."
             git clone $url $path
         }
         else {
             # If it does exist, update it
+            Write-Output "Updating repository..."
             Set-Location $path
             git pull
             git add .
